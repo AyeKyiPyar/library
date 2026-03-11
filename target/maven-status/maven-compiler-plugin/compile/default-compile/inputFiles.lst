@@ -1,0 +1,14 @@
+E:\LL\book-library\src\main\java\com\akps\demo\BookLibraryApplication.java
+E:\LL\book-library\src\main\java\com\akps\demo\config\DataInitializer.java
+E:\LL\book-library\src\main\java\com\akps\demo\controllers\BookController.java
+E:\LL\book-library\src\main\java\com\akps\demo\mapper\BookMapper.java
+E:\LL\book-library\src\main\java\com\akps\demo\models\Author.java
+E:\LL\book-library\src\main\java\com\akps\demo\models\Book.java
+E:\LL\book-library\src\main\java\com\akps\demo\models\Category.java
+E:\LL\book-library\src\main\java\com\akps\demo\repositories\AuthorRepository.java
+E:\LL\book-library\src\main\java\com\akps\demo\repositories\BookRepository.java
+E:\LL\book-library\src\main\java\com\akps\demo\repositories\CategoryRepository.java
+E:\LL\book-library\src\main\java\com\akps\demo\requests\CreateRequestBook.java
+E:\LL\book-library\src\main\java\com\akps\demo\requests\UpdateRequestBook.java
+E:\LL\book-library\src\main\java\com\akps\demo\responses\ResponseBook.java
+E:\LL\book-library\src\main\java\com\akps\demo\services\BookService.java
