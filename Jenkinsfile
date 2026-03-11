@@ -89,16 +89,19 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
+        
+        stage('Code Analysis') {
+            environment {
+                scannerHome = tool 'sonar'
+            }
             steps {
-                withCredentials([string(credentialsId: 'auth-token', variable: 'SONAR_TOKEN')]) {
+                withSonarQubeEnv('sonar') {
                     sh """
-                        mvn sonar:sonar \
-                        -Dsonar.host.url=${SONAR_URL} \
-                        -Dsonar.login=${SONAR_TOKEN} \
-                        -Dsonar.projectKey=library \
-                        -Dsonar.projectName=library \
-                        -Dsonar.sources=src/main/java
+                    ${scannerHome}/bin/sonar-scanner \
+                    -Dsonar.projectKey=calculator-demo \
+                    -Dsonar.projectName=calculator-demo \
+                    -Dsonar.sources=. \
+                    -Dsonar.java.binaries=target/classes
                     """
                 }
             }
