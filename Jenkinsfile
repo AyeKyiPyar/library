@@ -49,59 +49,60 @@ pipeline {
         }
 
         stage('Code Quality') {
-             parallel {
+            parallel {
 
-                 stage('Checkstyle') {
-                         sh 'mvn checkstyle:checkstyle'
-                     }
-                     post {
-                         always {
+                stage('Checkstyle') {
+                    steps {
+                        sh 'mvn checkstyle:checkstyle'
+                    }
+                    post {
+                        always {
                             publishHTML(target: [
-                                 allowMissing: true,
-                                 keepAll: true,
-                                 alwaysLinkToLastBuild: true,
+                                allowMissing: true,
+                                keepAll: true,
+                                alwaysLinkToLastBuild: true,
                                 reportDir: 'target/site',
-                                 reportFiles: 'checkstyle.html',
-                                 reportName: 'Checkstyle Report'
-                             ])
-                         }
-                     }
-                 }
-
-                 stage('Coverage') {
-                     steps {
-                         sh 'mvn jacoco:report'
-                     }
-                     post {
-                         always {
-                             publishHTML(target: [
-                                 allowMissing: true,
-                                 keepAll: true,
-                                 alwaysLinkToLastBuild: true,
-                                reportDir: 'target/site/jacoco',
-                                 reportFiles: 'index.html',
-                                 reportName: 'Coverage Report'
+                                reportFiles: 'checkstyle.html',
+                                reportName: 'Checkstyle Report'
                             ])
-                         }
-                     }
-                 }
-             }
-         }
+                        }
+                    }
+                }
 
-         stage('SonarQube Analysis') {
-             steps {
-                 withCredentials([string(credentialsId: 'auth-token', variable: 'SONAR_TOKEN')]) {
-                     sh """
-                         mvn sonar:sonar \
-                         -Dsonar.host.url=${SONAR_URL} \
-                         -Dsonar.login=${SONAR_TOKEN} \
-                         -Dsonar.projectKey=library \
-                         -Dsonar.projectName=library \
-                         -Dsonar.sources=src/main/java
-                     """
-                 }
-             }
-         }
+                stage('Coverage') {
+                    steps {
+                        sh 'mvn jacoco:report'
+                    }
+                    post {
+                        always {
+                            publishHTML(target: [
+                                allowMissing: true,
+                                keepAll: true,
+                                alwaysLinkToLastBuild: true,
+                                reportDir: 'target/site/jacoco',
+                                reportFiles: 'index.html',
+                                reportName: 'Coverage Report'
+                            ])
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withCredentials([string(credentialsId: 'auth-token', variable: 'SONAR_TOKEN')]) {
+                    sh """
+                        mvn sonar:sonar \
+                        -Dsonar.host.url=${SONAR_URL} \
+                        -Dsonar.login=${SONAR_TOKEN} \
+                        -Dsonar.projectKey=library \
+                        -Dsonar.projectName=library \
+                        -Dsonar.sources=src/main/java
+                    """
+                }
+            }
+        }
 
         stage('Package') {
             steps {
@@ -138,7 +139,11 @@ pipeline {
                 sh '''
                     for i in {1..20}
                     do
-                      curl -s http://localhost:8083 && break
+                      curl -s http://localhost:8083 || true
+                      if [ $? -eq 0 ]; then
+                        echo "Application is up"
+                        break
+                      fi
                       echo "Waiting for app..."
                       sleep 3
                     done
@@ -147,27 +152,24 @@ pipeline {
         }
 
         stage('Acceptance Test') {
-		    steps {
-		        // Run your acceptance test script
-		        sh 'mvn verify -Pacceptance'
-		    }
-		    post {
-		        always {
-		            // JUnit XML reports (for test results)
-		            junit allowEmptyResults: true, testResults: 'target/cucumber-reports/*.xml'
-		
-		            // HTML report from Cucumber
-		            publishHTML(target: [
-		                allowMissing: true,
-		                keepAll: true,
-		                alwaysLinkToLastBuild: true,
-		                reportDir: 'target/cucumber-reports',      // folder where HTML is generated
-		                reportFiles: 'cucumber-report.html',       // actual HTML file
-		                reportName: 'Acceptance Report'
-		            ])
-		        }
-		    }
-		}
+            steps {
+                sh 'mvn verify -Pacceptance'
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'target/cucumber-reports/*.xml'
+
+                    publishHTML(target: [
+                        allowMissing: true,
+                        keepAll: true,
+                        alwaysLinkToLastBuild: true,
+                        reportDir: 'target/cucumber-reports',
+                        reportFiles: 'cucumber-report.html',
+                        reportName: 'Acceptance Report'
+                    ])
+                }
+            }
+        }
     }
 
     post {
@@ -188,7 +190,5 @@ pipeline {
                 body: "Build #${BUILD_NUMBER} failed. Please check Jenkins."
             )
         }
-
-       
     }
 }
