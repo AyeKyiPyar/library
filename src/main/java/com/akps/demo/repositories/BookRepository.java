@@ -1,0 +1,17 @@
+package com.akps.demo.repositories;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import org.springframework.stereotype.Repository;
+
+import com.akps.demo.models.Book;
+
+
+@Repository
+public interface BookRepository extends JpaRepository<Book, Long> 
+{
+	Optional<Book> findByIsbn(String isbn);
+}
