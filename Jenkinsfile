@@ -98,8 +98,8 @@ pipeline {
                 withSonarQubeEnv('sonar') {
                     sh """
                     ${scannerHome}/bin/sonar-scanner \
-                    -Dsonar.projectKey=calculator-demo \
-                    -Dsonar.projectName=calculator-demo \
+                    -Dsonar.projectKey=lib-demo \
+                    -Dsonar.projectName=lib-demo \
                     -Dsonar.sources=. \
                     -Dsonar.java.binaries=target/classes
                     """
