@@ -1,19 +1,18 @@
 package com.akps.demo.unit;
 
 
-
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import com.akps.demo.controllers.BookController;
-import com.akps.demo.models.Book;
-import com.akps.demo.responses.ResponseBook;
-import com.akps.demo.services.BookService;
+
+import com.akps.demo.responses.BookResponse;
+import com.akps.demo.services.impl.BookServiceImpl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ class BookControllerTest
     private BookController bookController;
 
     @Mock
-    private BookService bookService;
+    private BookServiceImpl bookService;
 
     @BeforeEach
     void setUp() 
@@ -39,7 +38,7 @@ class BookControllerTest
     void testGetBooks_Success() 
     {
         // Prepare mock data
-    	ResponseBook book1 = ResponseBook.builder()
+    	BookResponse book1 = BookResponse.builder()
     	        .id(1L)
     	        .title("Java Basics")
     	        .isbn("ISBN123")
@@ -50,7 +49,7 @@ class BookControllerTest
     	        .categoryId(2L)
     	        .build();
 
-    	ResponseBook book2 = ResponseBook.builder()
+    	BookResponse book2 = BookResponse.builder()
     	        .id(2L)
     	        .title("Spring Boot")
     	        .isbn("ISBN456")
@@ -61,7 +60,7 @@ class BookControllerTest
     	        .categoryId(3L)
     	        .build();
 
-    	List<ResponseBook> books = Arrays.asList(book1, book2);
+    	List<BookResponse> books = Arrays.asList(book1, book2);
 
     	when(bookService.findAll()).thenReturn(books);
 
@@ -85,7 +84,7 @@ class BookControllerTest
     @Test
     void testGetByISBN_Found() 
     {
-    	ResponseBook book = ResponseBook.builder()
+    	BookResponse book = BookResponse.builder()
     	        .id(1L)
     	        .title("Java Basics")
     	        .isbn("ISBN123")

@@ -1,15 +1,16 @@
 package com.akps.demo.mapper;
 
 
-import com.akps.demo.models.Book;
-import com.akps.demo.requests.CreateRequestBook;
-import com.akps.demo.responses.ResponseBook;
+
+import com.akps.demo.models.*;
+import com.akps.demo.requests.CreateBookRequest;
+import com.akps.demo.responses.BookResponse;
 
 public class BookMapper 
 {
-	public static ResponseBook toResponse(Book book) 
+	public static BookResponse toResponse(Book book) 
 	{
-        return ResponseBook.builder()
+        return BookResponse.builder()
                 .id(book.getId())
                 .title(book.getTitle())
                 .isbn(book.getIsbn())
@@ -21,7 +22,7 @@ public class BookMapper
                 .build();
     }
 
-    public static Book toEntity(CreateRequestBook request)
+    public static Book toEntity(CreateBookRequest request, Category category, Author author)
     {
         Book book = new Book();
         book.setTitle(request.getTitle());
@@ -29,6 +30,8 @@ public class BookMapper
         book.setPrice(request.getPrice());
         book.setPublisher(request.getPublisher());
         book.setPublishYear(request.getPublishYear());
+        book.setAuthor(author);
+        book.setCategory(category);
         return book;
     }
 }

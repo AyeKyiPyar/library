@@ -1,6 +1,6 @@
 package com.akps.demo.responses;
 
-import com.akps.demo.requests.UpdateRequestBook;
+import com.akps.demo.requests.UpdateBookRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ResponseBook 
+public class BookResponse 
 {
 	private Long id;
 	

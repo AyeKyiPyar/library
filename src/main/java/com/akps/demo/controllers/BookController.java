@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import com.akps.demo.services.*;
+import com.akps.demo.services.impl.BookServiceImpl;
 
 @RestController
 @RequestMapping("/api/books")
@@ -21,7 +22,7 @@ public class BookController
 {
 
 	@Autowired
-    private BookService bookService;
+    private BookServiceImpl bookService;
 	
     
 	@GetMapping
