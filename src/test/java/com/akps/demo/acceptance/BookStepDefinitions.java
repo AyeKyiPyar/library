@@ -61,44 +61,7 @@ public class BookStepDefinitions
     	
     }
 
-//    // Scenario 1
-//    @Given("the book service has books")
-//    public void the_book_service_has_books() 
-//    {
-//    	CreateAuthorRequest author = new CreateAuthorRequest();
-//    	author.setName("Jone");
-//    	AuthorResponse createdAuthor = authorService.save(author);
-//
-//    	CreateCategoryRequest category = new CreateCategoryRequest();
-//    	category.setName("CS");
-//    	
-//    	CategoryResponse createdCategory = categoryService.save(category);
-//    	
-//    	
-//    	
-//
-//    	CreateBookRequest request = new CreateBookRequest();
-//    	request.setTitle("Spring Boot Guide");
-//    	request.setIsbn("ISBN001");
-//    	request.setPrice(29.99);
-//    	request.setPublisher("Tech Press");
-//    	request.setPublishYear("2023");
-//    	request.setAuthorId(createdAuthor.getId());
-//    	request.setCategoryId(createdCategory.getId());
-//    	
-//        bookService.createBook(request);
-//       
-//    }
-//
-//    @When("the client requests all books")
-//    public void the_client_requests_all_books() 
-//    {
-//        var books = bookService.findAll();
-//
-//        if (!books.isEmpty()) {
-//            responseStatus = HttpStatus.OK;
-//        }
-//    }
+
 
     // Scenario 1
     @Given("the client has a new book with title {string}, author {string}, and ISBN {string}")
@@ -159,34 +122,6 @@ public class BookStepDefinitions
     {
         assertEquals(statusCode, responseStatus.value());
     }
-
-//    @Autowired
-//    private BookService bookService;
-//    
-//    private int status;
-//
-//   
-//    // ---------------- Scenario 1 ----------------
-//    @Given("the book service has books")
-//    public void the_book_service_has_books() 
-//    {
-//
-//       List<ResponseBook> books = bookService.findAll();
-//    }
-//
-//    @When("the client requests all books")
-//    public void the_client_requests_all_books()
-//    {
-//        // Call the real controller method
-//    	List<ResponseBook> books = bookService.findAll();
-//    }
-//
-//    @Then("the response status should be {int}")
-//    public void the_response_status_should_be(Integer statusCode) 
-//    {
-//        assertEquals(statusCode.intValue(), 200);
-//    }
-
 
     
 }
