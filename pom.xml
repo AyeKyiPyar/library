@@ -144,7 +144,7 @@
                 <configuration>
                     <reportFormat>xml</reportFormat>
                     <includes>
-                        <include>**/CucumberTest.java</include>
+                        <include>**/CucumberTestRunner.java</include>
                     </includes>
                 </configuration>
             </plugin>
