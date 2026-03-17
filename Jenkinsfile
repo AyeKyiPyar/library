@@ -37,17 +37,16 @@ pipeline {
             }
         }
 
-       stage('Unit Tests') {
-		    steps {
-		        sh 'mvn test'
-		        
-		    }
-		    post {
-		        always {
-		            junit allowEmptyResults: true, testResults: 'target/surefire-reports.xml'
-		        }
-		    }
-		}
+        stage('Unit Tests') {
+            steps {
+                sh 'mvn test'
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                }
+            }
+        }
 
         stage('Code Quality') {
             parallel {
@@ -90,20 +89,15 @@ pipeline {
             }
         }
 
-        
         stage('Code Analysis') {
-            environment {
-                scannerHome = tool 'sonar'
-            }
             steps {
                 withSonarQubeEnv('sonar') {
-                    sh """
-                    ${scannerHome}/bin/sonar-scanner \
-                    -Dsonar.projectKey=lib-demo \
-                    -Dsonar.projectName=lib-demo \
-                    -Dsonar.sources=. \
-                    -Dsonar.java.binaries=target/classes
-                    """
+                    sh '''
+                        mvn clean verify sonar:sonar \
+                        -Dsonar.projectKey=lib-demo \
+                        -Dsonar.projectName=lib-demo \
+                        -Dsonar.host.url=$SONAR_HOST_URL
+                    '''
                 }
             }
         }
@@ -143,11 +137,7 @@ pipeline {
                 sh '''
                     for i in {1..20}
                     do
-                      curl -s http://localhost:8083 || true
-                      if [ $? -eq 0 ]; then
-                        echo "Application is up"
-                        break
-                      fi
+                      curl -s http://localhost:8083 && break
                       echo "Waiting for app..."
                       sleep 3
                     done
@@ -161,7 +151,7 @@ pipeline {
             }
             post {
                 always {
-                    junit allowEmptyResults: true, testResults: 'target/cucumber-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: '**/target/cucumber-reports/*.xml'
 
                     publishHTML(target: [
                         allowMissing: true,
