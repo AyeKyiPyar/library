@@ -156,7 +156,7 @@ pipeline {
 			              mvn verify -Pacceptance
 			        '''
 			    }
-			}
+			
             post {
                 always {
                     junit allowEmptyResults: true, testResults: '**/target/cucumber-reports/*.xml'
