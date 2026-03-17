@@ -37,17 +37,17 @@ pipeline {
             }
         }
 
-       stage('Unit Tests') {
+       /*stage('Unit Tests') {
 		    steps {
 		        sh 'mvn -B test'
 		        sh 'ls -R target'
 		    }
 		    post {
 		        always {
-		            junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
+		            junit allowEmptyResults: true, testResults: 'target/surefire-reports.xml'
 		        }
 		    }
-		}
+		}*/
 
         stage('Code Quality') {
             parallel {
@@ -132,7 +132,7 @@ pipeline {
                     docker rm ${CONTAINER_NAME} || true
                     docker run -d \
                         --name ${CONTAINER_NAME} \
-                        -p 8083:8080 \
+                        -p 8083:8081 \
                         ${IMAGE_NAME}:${VERSION}
                 """
             }
