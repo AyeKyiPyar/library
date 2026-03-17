@@ -19,7 +19,7 @@ pipeline {
         IMAGE_NAME = "library"
         CONTAINER_NAME = "library-container"
         VERSION = "${BUILD_NUMBER}"
-        SONAR_URL = "http://localhost:9000"
+        SONAR_URL = "http://192.168.0.12:9000"
     }
 
     stages {
