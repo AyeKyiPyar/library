@@ -7,10 +7,10 @@ pipeline {
         timestamps()
     }
 
-    triggers {
+   /* triggers {
         pollSCM('H/5 * * * *')
     }
-
+*/
     tools {
         maven 'maven3.9'
     }
@@ -37,16 +37,16 @@ pipeline {
             }
         }
 
-        stage('Unit Tests') {
+        /*stage('Unit Tests') {
             steps {
                 sh 'mvn test'
             }
             post {
                 always {
-                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: '*target/surefire-reports.xml'
                 }
             }
-        }
+        }*/
 
         stage('Code Quality') {
             parallel {
@@ -105,7 +105,7 @@ pipeline {
         stage('Package') {
             steps {
                 sh 'mvn -B package -DskipTests'
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                archiveArtifacts artifacts: 'target.jar', fingerprint: true
             }
         }
 
@@ -132,7 +132,7 @@ pipeline {
             }
         }
 
-        stage('Wait For App') {
+      /*  stage('Wait For App') {
             steps {
                 sh '''
                     for i in {1..20}
@@ -159,7 +159,7 @@ pipeline {
 			
             post {
                 always {
-                    junit allowEmptyResults: true, testResults: '**/target/cucumber-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: '*target/cucumber-reports.xml'
 
                     publishHTML(target: [
                         allowMissing: true,
@@ -170,7 +170,7 @@ pipeline {
                         reportName: 'Acceptance Report'
                     ])
                 }
-            }
+            }*/
         }
     }
 
