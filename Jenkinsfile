@@ -145,7 +145,6 @@ pipeline {
             }
         }
 
-        stage('Acceptance Test') {
            stage('Acceptance Test') {
 			    steps {
 			        sh '''
