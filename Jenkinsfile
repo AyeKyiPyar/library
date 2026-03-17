@@ -146,9 +146,18 @@ pipeline {
         }
 
         stage('Acceptance Test') {
-            steps {
-               sh 'mvn verify -Pacceptance -Dspring.profiles.active=test'
-            }
+           stage('Acceptance Test') {
+			    steps {
+			        sh '''
+			            docker run --rm \
+			              --network mysql-network \
+			              -v $PWD:/app \
+			              -w /app \
+			              maven:3.9-eclipse-temurin-21 \
+			              mvn verify -Pacceptance
+			        '''
+			    }
+			}
             post {
                 always {
                     junit allowEmptyResults: true, testResults: '**/target/cucumber-reports/*.xml'
