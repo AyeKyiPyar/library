@@ -147,7 +147,7 @@ pipeline {
 
         stage('Acceptance Test') {
             steps {
-                sh 'mvn verify -Pacceptance'
+               sh 'mvn verify -Pacceptance -Dspring.profiles.active=test'
             }
             post {
                 always {
