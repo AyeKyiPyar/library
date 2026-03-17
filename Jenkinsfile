@@ -37,17 +37,17 @@ pipeline {
             }
         }
 
-       /*stage('Unit Tests') {
+       stage('Unit Tests') {
 		    steps {
-		        sh 'mvn -B test'
-		        sh 'ls -R target'
+		        sh 'mvn test'
+		        
 		    }
 		    post {
 		        always {
 		            junit allowEmptyResults: true, testResults: 'target/surefire-reports.xml'
 		        }
 		    }
-		}*/
+		}
 
         stage('Code Quality') {
             parallel {
