@@ -17,7 +17,7 @@ pipeline {
         VERSION = "${BUILD_NUMBER}"
         SONAR_URL = "http://150.95.81.177:9000"
         MYSQL_CONTAINER = "mysql-docker"
-        DOCKER_NETWORK = "mysql-network"
+        DOCKER_NETWORK = "jenkins-network"
     }
 
     stages {
