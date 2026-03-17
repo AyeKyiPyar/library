@@ -7,10 +7,6 @@ pipeline {
         timestamps()
     }
 
-   /* triggers {
-        pollSCM('H/5 * * * *')
-    }
-*/
     tools {
         maven 'maven3.9'
     }
@@ -20,6 +16,8 @@ pipeline {
         CONTAINER_NAME = "library-container"
         VERSION = "${BUILD_NUMBER}"
         SONAR_URL = "http://150.95.81.177:9000"
+        MYSQL_CONTAINER = "mysql-docker"
+        DOCKER_NETWORK = "mysql-network"
     }
 
     stages {
@@ -36,17 +34,6 @@ pipeline {
                 sh 'mvn -B clean compile'
             }
         }
-
-        /*stage('Unit Tests') {
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit allowEmptyResults: true, testResults: '*target/surefire-reports.xml'
-                }
-            }
-        }*/
 
         stage('Code Quality') {
             parallel {
@@ -105,7 +92,7 @@ pipeline {
         stage('Package') {
             steps {
                 sh 'mvn -B package -DskipTests'
-                archiveArtifacts artifacts: 'target.jar', fingerprint: true
+                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
             }
         }
 
@@ -126,40 +113,27 @@ pipeline {
                     docker rm ${CONTAINER_NAME} || true
                     docker run -d \
                         --name ${CONTAINER_NAME} \
+                        --network ${DOCKER_NETWORK} \
                         -p 8083:8081 \
                         ${IMAGE_NAME}:${VERSION}
                 """
             }
         }
 
-      /*  stage('Wait For App') {
+        stage('Acceptance Test') {
             steps {
-                sh '''
-                    for i in {1..20}
-                    do
-                      curl -s http://localhost:8083 && break
-                      echo "Waiting for app..."
-                      sleep 3
-                    done
-                '''
+                sh """
+                    docker run --rm ^
+                        --network ${DOCKER_NETWORK} ^
+                        -v \$PWD:/app ^
+                        -w /app ^
+                        maven:3.9-eclipse-temurin-21 ^
+                        mvn verify -Pacceptance
+                """
             }
-        }
-
-           stage('Acceptance Test') {
-			    steps {
-			        sh '''
-			            docker run --rm \
-			              --network mysql-network \
-			              -v $PWD:/app \
-			              -w /app \
-			              maven:3.9-eclipse-temurin-21 \
-			              mvn verify -Pacceptance
-			        '''
-			    }
-			
             post {
                 always {
-                    junit allowEmptyResults: true, testResults: '*target/cucumber-reports.xml'
+                    junit allowEmptyResults: true, testResults: '**/target/cucumber-reports/*.xml'
 
                     publishHTML(target: [
                         allowMissing: true,
@@ -170,8 +144,9 @@ pipeline {
                         reportName: 'Acceptance Report'
                     ])
                 }
-            }*/
+            }
         }
+
     }
 
     post {
