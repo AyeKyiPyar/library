@@ -83,7 +83,7 @@ pipeline {
                         mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=lib-demo \
                         -Dsonar.projectName=lib-demo \
-                        -Dsonar.host.url=$SONAR_HOST_URL
+                        -Dsonar.host.url=$SONAR_URL
                     '''
                 }
             }
