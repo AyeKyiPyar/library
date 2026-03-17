@@ -18,6 +18,7 @@ pipeline {
         SONAR_URL = "http://150.95.81.177:9000"
         MYSQL_CONTAINER = "mysql-docker"
         DOCKER_NETWORK = "jenkins-network"
+        SONAR_AUTH_TOKEN = "auth-token"
     }
 
     stages {
@@ -76,7 +77,7 @@ pipeline {
             }
         }
 
-        stage('Code Analysis') {
+        /*stage('Code Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
                     sh '''
@@ -87,7 +88,20 @@ pipeline {
                     '''
                 }
             }
-        }
+        }*/
+        stage('Code Analysis') {
+		    steps {
+		        withSonarQubeEnv('sonar') {
+		            sh '''
+		                mvn clean verify sonar:sonar \
+		                -Dsonar.projectKey=lib-demo \
+		                -Dsonar.projectName=lib-demo \
+		                -Dsonar.host.url=$SONAR_URL \
+		                -Dsonar.login=$SONAR_AUTH_TOKEN
+		            '''
+		        }
+		    }
+		}
 
         stage('Package') {
             steps {
