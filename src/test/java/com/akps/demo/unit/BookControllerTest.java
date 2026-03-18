@@ -17,6 +17,7 @@ import com.akps.demo.services.impl.BookServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 class BookControllerTest 
@@ -66,7 +67,7 @@ class BookControllerTest
 
     	ResponseEntity<?> response = bookController.getBooks();
 
-    	assertEquals(200, response.getStatusCode());
+    	assertEquals(HttpStatus.OK, response.getStatusCode());
     	assertEquals(books, response.getBody());
     }
 
@@ -77,7 +78,7 @@ class BookControllerTest
 
         ResponseEntity<?> response = bookController.getBooks();
 
-        assertEquals(404, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertTrue(response.getBody().toString().contains("Database error"));
     }
 
@@ -94,7 +95,7 @@ class BookControllerTest
     	        .authorId(1L)
     	        .categoryId(2L)
     	        .build();
-        when(bookService.getBookByIsbn("ISBN123")).thenReturn(Optional.of(book));
+        when(bookService.getBookByIsbn("ISBN123")).thenReturn(book);
 
 //        ResponseEntity<?> response = bookController.getByISBN("ISBN123");
 //
@@ -105,7 +106,8 @@ class BookControllerTest
     @Test
     void testGetByISBN_NotFound() 
     {
-        when(bookService.getBookByIsbn("ISBN999")).thenReturn(Optional.empty());
+    	when(bookService.getBookByIsbn("ISBN999"))
+        .thenThrow(new RuntimeException("Book not found"));
 
         ResponseEntity<?> response = bookController.getByISBN("ISBN999");
 
