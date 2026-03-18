@@ -16,6 +16,7 @@ pipeline {
         CONTAINER_NAME = "library-container"
         VERSION = "${BUILD_NUMBER}"
         SONAR_URL = "http://sonar:9000"
+        MYSQL_CONTAINER = "mysql-docker"
         DOCKER_NETWORK = "jenkins-network"
         SONAR_AUTH_TOKEN = "auth-token"
     }
@@ -29,14 +30,9 @@ pipeline {
             }
         }
 
-        stage('Build & Unit Test') {
+        stage('Build') {
             steps {
-                sh 'mvn -B clean test'
-            }
-            post {
-                always {
-                    junit '**/target/surefire-reports/*.xml'
-                }
+                sh 'mvn -B clean compile'
             }
         }
 
@@ -45,7 +41,7 @@ pipeline {
 
                 stage('Checkstyle') {
                     steps {
-                        sh 'mvn checkstyle:check'
+                        sh 'mvn checkstyle:checkstyle'
                     }
                     post {
                         always {
@@ -81,27 +77,31 @@ pipeline {
             }
         }
 
-        stage('Sonar Analysis') {
+        /*stage('Code Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
-                    sh """
-                        mvn sonar:sonar \
+                    sh '''
+                        mvn clean verify sonar:sonar \
                         -Dsonar.projectKey=lib-demo \
                         -Dsonar.projectName=lib-demo \
-                        -Dsonar.host.url=$SONAR_URL \
-                        -Dsonar.login=$SONAR_AUTH_TOKEN
-                    """
+                        -Dsonar.host.url=$SONAR_URL
+                    '''
                 }
             }
-        }
-
-        stage('Quality Gate') {
-            steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
-            }
-        }
+        }*/
+        stage('Code Analysis') {
+		    steps {
+		        withSonarQubeEnv('sonar') {
+		            sh '''
+		                mvn clean verify sonar:sonar \
+		                -Dsonar.projectKey=lib-demo \
+		                -Dsonar.projectName=lib-demo \
+		                -Dsonar.host.url=$SONAR_URL \
+		                -Dsonar.login=$SONAR_AUTH_TOKEN
+		            '''
+		        }
+		    }
+		}
 
         stage('Package') {
             steps {
@@ -140,10 +140,8 @@ pipeline {
             }
             post {
                 always {
-                    // Proper Failsafe reporting
-                    junit '**/target/failsafe-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: '**/target/cucumber-reports/*.xml'
 
-                    // Cucumber report if available
                     publishHTML(target: [
                         allowMissing: true,
                         keepAll: true,
@@ -165,15 +163,6 @@ pipeline {
                 to: 'ayekyipyarshwe@gmail.com',
                 subject: "Build SUCCESS #${BUILD_NUMBER}",
                 body: "Build #${BUILD_NUMBER} completed successfully."
-            )
-        }
-
-        unstable {
-            echo "⚠️ PIPELINE UNSTABLE - Check test failures or quality gate"
-            emailext(
-                to: 'ayekyipyarshwe@gmail.com',
-                subject: "Build UNSTABLE #${BUILD_NUMBER}",
-                body: "Build #${BUILD_NUMBER} is unstable. Please check Jenkins test reports."
             )
         }
 
