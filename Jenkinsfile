@@ -16,7 +16,6 @@ pipeline {
         CONTAINER_NAME = "library-container"
         VERSION = "${BUILD_NUMBER}"
         SONAR_URL = "http://sonar:9000"
-        MYSQL_CONTAINER = "mysql-docker"
         DOCKER_NETWORK = "jenkins-network"
         SONAR_AUTH_TOKEN = "auth-token"
     }
@@ -30,9 +29,14 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build & Unit Test') {
             steps {
-                sh 'mvn -B clean compile'
+                sh 'mvn -B clean test'
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                }
             }
         }
 
@@ -41,7 +45,7 @@ pipeline {
 
                 stage('Checkstyle') {
                     steps {
-                        sh 'mvn checkstyle:checkstyle'
+                        sh 'mvn checkstyle:check'
                     }
                     post {
                         always {
@@ -77,31 +81,27 @@ pipeline {
             }
         }
 
-        /*stage('Code Analysis') {
+        stage('Sonar Analysis') {
             steps {
                 withSonarQubeEnv('sonar') {
-                    sh '''
-                        mvn clean verify sonar:sonar \
+                    sh """
+                        mvn sonar:sonar \
                         -Dsonar.projectKey=lib-demo \
                         -Dsonar.projectName=lib-demo \
-                        -Dsonar.host.url=$SONAR_URL
-                    '''
+                        -Dsonar.host.url=$SONAR_URL \
+                        -Dsonar.login=$SONAR_AUTH_TOKEN
+                    """
                 }
             }
-        }*/
-        stage('Code Analysis') {
-		    steps {
-		        withSonarQubeEnv('sonar') {
-		            sh '''
-		                mvn clean verify sonar:sonar \
-		                -Dsonar.projectKey=lib-demo \
-		                -Dsonar.projectName=lib-demo \
-		                -Dsonar.host.url=$SONAR_URL \
-		                -Dsonar.login=$SONAR_AUTH_TOKEN
-		            '''
-		        }
-		    }
-		}
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
 
         stage('Package') {
             steps {
@@ -140,8 +140,10 @@ pipeline {
             }
             post {
                 always {
-                    junit allowEmptyResults: true, testResults: '**/target/cucumber-reports/*.xml'
+                    // Proper Failsafe reporting
+                    junit '**/target/failsafe-reports/*.xml'
 
+                    // Cucumber report if available
                     publishHTML(target: [
                         allowMissing: true,
                         keepAll: true,
@@ -163,6 +165,15 @@ pipeline {
                 to: 'ayekyipyarshwe@gmail.com',
                 subject: "Build SUCCESS #${BUILD_NUMBER}",
                 body: "Build #${BUILD_NUMBER} completed successfully."
+            )
+        }
+
+        unstable {
+            echo "⚠️ PIPELINE UNSTABLE - Check test failures or quality gate"
+            emailext(
+                to: 'ayekyipyarshwe@gmail.com',
+                subject: "Build UNSTABLE #${BUILD_NUMBER}",
+                body: "Build #${BUILD_NUMBER} is unstable. Please check Jenkins test reports."
             )
         }
 
