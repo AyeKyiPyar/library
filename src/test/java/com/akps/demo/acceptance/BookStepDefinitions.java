@@ -85,6 +85,12 @@ public class BookStepDefinitions
     @When("the client sends a request to create the book")
     public void the_client_sends_request_to_create_book() 
     {
+    	// Ensure service is not null
+        if (bookService == null) 
+        {
+            throw new RuntimeException("BookService is null! Spring context not loaded.");
+        }
+        
     	response = bookService.getBookByIsbn(createdBook.getIsbn());
     	if (response == null)
     	{
