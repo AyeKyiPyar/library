@@ -137,13 +137,13 @@ pipeline {
         stage('Acceptance Test') {
             steps {
                 sh """
-                    docker run --rm ^
-                        --network ${DOCKER_NETWORK} ^
-                        -v \$PWD:/app ^
-                        -w /app ^
-                        maven:3.9-eclipse-temurin-21 ^
-                        mvn verify -Pacceptance
-                """
+				    docker run --rm \\
+				        --network ${DOCKER_NETWORK} \\
+				        -v \$(pwd):/app \\
+				        -w /app \\
+				        maven:3.9-eclipse-temurin-21 \\
+				        mvn verify -Pacceptance
+				"""
             }
             post {
                 always {
