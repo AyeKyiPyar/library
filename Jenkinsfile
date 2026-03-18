@@ -15,7 +15,7 @@ pipeline {
         IMAGE_NAME = "library"
         CONTAINER_NAME = "library-container"
         VERSION = "${BUILD_NUMBER}"
-        SONAR_URL = "http://150.95.81.177:9000"
+        SONAR_URL = "http://sonar:9000"
         MYSQL_CONTAINER = "mysql-docker"
         DOCKER_NETWORK = "jenkins-network"
         SONAR_AUTH_TOKEN = "auth-token"
