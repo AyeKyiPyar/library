@@ -40,10 +40,11 @@ public class BookServiceImpl implements BookService
         return BookMapper.toResponse(saved);
     }
 
-    public Optional<BookResponse> getBookByIsbn(String isbn) 
+    public BookResponse getBookByIsbn(String isbn) 
     {
-        return bookRepository.findByIsbn(isbn)   // Optional<Book>
-                             .map(BookMapper::toResponse);  // Optional<ResponseBook>
+    	 return bookRepository.findByIsbn(isbn)
+    	            .map(BookMapper::toResponse)
+    	            .orElseThrow(() -> new RuntimeException("Book not found with ISBN: " + isbn));
     }
 
     public List<BookResponse> findAll() 

@@ -45,9 +45,7 @@ public class BookController
 	public ResponseEntity<?> getByISBN(@RequestParam String isbn)
 	{
 		 // Search for book by ISBN
-        return bookService.getBookByIsbn(isbn)
-                .map(book -> ResponseEntity.ok(book))          // Return 200 OK with book
-                .orElse(ResponseEntity.notFound().build());    // Return 404 if not found
+		return ResponseEntity.ok(bookService.getBookByIsbn(isbn));
 	}
 
     

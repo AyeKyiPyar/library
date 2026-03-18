@@ -42,27 +42,27 @@ public class DataInitializer implements CommandLineRunner
     	}
 
     	// Save sample books
-    	if (bookRepository.count() == 0)
-    	{
-    	    Author author = authorRepository.findAll().get(0);
-
-    	    Category category = new Category();
-    	    category.setName("Programming");
-    	    categoryRepository.save(category);
-
-    	    Book book1 = new Book();
-    	    book1.setTitle("Spring Boot Guide");
-    	    book1.setIsbn("ISBN123");
-    	    book1.setPrice(29.99);
-    	    book1.setPublisher("Tech Press");
-    	    book1.setPublishYear("2024");
-    	    book1.setAuthor(author);
-    	    book1.setCategory(category);
-
-    	    bookRepository.save(book1);
-
-    	    System.out.println("Sample books saved successfully!");
-    	}
+//    	if (bookRepository.count() == 0)
+//    	{
+//    	    Author author = authorRepository.findAll().get(0);
+//
+//    	    Category category = new Category();
+//    	    category.setName("Programming");
+//    	    categoryRepository.save(category);
+//
+//    	    Book book1 = new Book();
+//    	    book1.setTitle("Spring Boot Guide");
+//    	    book1.setIsbn("ISBN123");
+//    	    book1.setPrice(29.99);
+//    	    book1.setPublisher("Tech Press");
+//    	    book1.setPublishYear("2024");
+//    	    book1.setAuthor(author);
+//    	    book1.setCategory(category);
+//
+//    	    bookRepository.save(book1);
+//
+//    	    System.out.println("Sample books saved successfully!");
+//    	}
         
     }
 }

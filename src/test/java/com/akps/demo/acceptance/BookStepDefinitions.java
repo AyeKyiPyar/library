@@ -43,15 +43,17 @@ public class BookStepDefinitions
     private HttpStatus responseStatus;
     private CreateBookRequest createdBook;
     private Optional<BookResponse> foundBook;
+    private BookResponse response;
     private AuthorResponse authorResponse;
     private CategoryResponse categoryResponse;
     
    
-    public BookStepDefinitions(BookService bookService, CategoryService categoryService, AuthorService authorService)
+    public BookStepDefinitions(BookService bookService, CategoryService categoryService, AuthorService authorService, BookResponse response)
     {
     	this.bookService = bookService;
     	this.categoryService = categoryService;
     	this.authorService = authorService;
+    	
     	
     	CreateCategoryRequest c1 = new CreateCategoryRequest("IT");
     	categoryResponse = categoryService.save(c1);
@@ -83,7 +85,11 @@ public class BookStepDefinitions
     @When("the client sends a request to create the book")
     public void the_client_sends_request_to_create_book() 
     {
-        bookService.createBook(createdBook);
+    	response = bookService.getBookByIsbn(createdBook.getIsbn());
+    	if (response == null)
+    	{
+    		bookService.createBook(createdBook);
+    	}
         responseStatus = HttpStatus.CREATED;
     }
 
@@ -109,9 +115,9 @@ public class BookStepDefinitions
     @When("the client requests the book with ISBN {string}")
     public void the_client_requests_book_with_isbn(String isbn)
     {
-        foundBook = bookService.getBookByIsbn(isbn);
+        response = bookService.getBookByIsbn(isbn);
 
-        if (foundBook.isPresent()) {
+        if (response != null) {
             responseStatus = HttpStatus.OK;
         }
     }

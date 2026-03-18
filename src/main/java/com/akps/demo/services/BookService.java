@@ -9,6 +9,6 @@ import com.akps.demo.responses.BookResponse;
 public interface BookService 
 {
 	BookResponse createBook(CreateBookRequest request);
-	Optional<BookResponse> getBookByIsbn(String isbn) ;
+	BookResponse getBookByIsbn(String isbn) ;
 	List<BookResponse> findAll();
 }
