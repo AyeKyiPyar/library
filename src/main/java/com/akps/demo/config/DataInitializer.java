@@ -30,17 +30,16 @@ public class DataInitializer implements CommandLineRunner
     public void run(String... args) throws Exception 
     {
     	// Check if database is empty
-    	if (authorRepository.count() == 0) 
-    	{
-    	    Author a1 = new Author(null, "John Smith", "john.smith@example.com");
-    	    Author a2 = new Author(null, "Jane Doe", "jane.doe@example.com");
-
-    	    authorRepository.save(a1);
-    	    authorRepository.save(a2);
-
-    	    System.out.println("Sample authors saved successfully!");
-    	}
-
+		/*
+		 * if (authorRepository.count() == 0) { Author a1 = new Author(null,
+		 * "John Smith", "john.smith@example.com"); Author a2 = new Author(null,
+		 * "Jane Doe", "jane.doe@example.com");
+		 * 
+		 * authorRepository.save(a1); authorRepository.save(a2);
+		 * 
+		 * System.out.println("Sample authors saved successfully!"); }
+		 */
+    	
     	// Save sample books
 //    	if (bookRepository.count() == 0)
 //    	{

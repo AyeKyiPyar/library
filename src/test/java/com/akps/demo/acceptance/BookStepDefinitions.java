@@ -7,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.http.ResponseEntity;
 
+import io.cucumber.java.Before;
 import io.cucumber.java.en.*;
 
 import com.akps.demo.controllers.BookController;
@@ -34,88 +35,86 @@ import io.cucumber.java.en.Then;
 import org.springframework.http.HttpStatus;
 
 @SpringBootTest
-public class BookStepDefinitions 
-{
-	@Autowired
+public class BookStepDefinitions {
+
+    @Autowired
     private BookService bookService;
-	
-	@Autowired
+
+    @Autowired
     private CategoryService categoryService;
-	
-	@Autowired
+
+    @Autowired
     private AuthorService authorService;
 
     private HttpStatus responseStatus;
     private CreateBookRequest createdBook;
-    private Optional<BookResponse> foundBook;
     private BookResponse response;
     private AuthorResponse authorResponse;
     private CategoryResponse categoryResponse;
-    
-   
-    public BookStepDefinitions()
+
+    // Initialize required data after Spring injects services
+    @Before
+    public void setup() 
     {
-    	
-    	
-    	CreateCategoryRequest c1 = new CreateCategoryRequest("IT");
-    	categoryResponse = categoryService.save(c1);
-    	
-    	CreateAuthorRequest a1 = new CreateAuthorRequest("Smith", "amith@example.com");
-    	authorResponse = authorService.save(a1);
-    	
+        if (categoryResponse == null)
+        {
+            CreateCategoryRequest c1 = new CreateCategoryRequest("IT");
+            categoryResponse = categoryService.save(c1);
+        }
+
+        if (authorResponse == null) {
+            CreateAuthorRequest a1 = new CreateAuthorRequest("Smith", "smith@example.com");
+            authorResponse = authorService.save(a1);
+        }
     }
-
-
 
     // Scenario 1
     @Given("the client has a new book with title {string}, author {string}, and ISBN {string}")
-    public void the_client_has_a_new_book(String title, String author, String isbn) 
+    public void the_client_has_a_new_book(String title, String authorName, String isbn)
     {
-    	
+        // Create author dynamically
+        CreateAuthorRequest a1 = new CreateAuthorRequest(authorName, authorName.toLowerCase() + "@example.com");
+        authorResponse = authorService.save(a1);
 
-    	CreateBookRequest request = new CreateBookRequest();
-    	request.setTitle("Spring Boot Guide");
-    	request.setIsbn("ISBN002");
-    	request.setPrice(29.99);
-    	request.setPublisher("Tech Press");
-    	request.setPublishYear("2023");
-    	request.setAuthorId(authorResponse.getId());
-    	request.setCategoryId(categoryResponse.getId());
+        // Create book request
+        CreateBookRequest request = new CreateBookRequest();
+        request.setTitle(title);
+        request.setIsbn(isbn);
+        request.setPrice(29.99);
+        request.setPublisher("Tech Press");
+        request.setPublishYear("2023");
+        request.setAuthorId(authorResponse.getId());
+        request.setCategoryId(categoryResponse.getId());
         createdBook = request;
     }
 
     @When("the client sends a request to create the book")
-    public void the_client_sends_request_to_create_book() 
+    public void the_client_sends_request_to_create_book()
     {
-    	// Ensure service is not null
-        if (bookService == null) 
-        {
+        if (bookService == null) {
             throw new RuntimeException("BookService is null! Spring context not loaded.");
         }
-        
-    	response = bookService.getBookByIsbn(createdBook.getIsbn());
-    	if (response == null)
-    	{
-    		bookService.createBook(createdBook);
-    	}
+
+        response = bookService.getBookByIsbn(createdBook.getIsbn());
+        if (response == null) {
+            response = bookService.createBook(createdBook);
+        }
         responseStatus = HttpStatus.CREATED;
     }
 
     // Scenario 2
     @Given("the book service has a book with ISBN {string}")
-    public void the_book_service_has_book_with_isbn(String isbn)
+    public void the_book_service_has_book_with_isbn(String isbn) 
     {
-    	
-        // Create book
         CreateBookRequest book = CreateBookRequest.builder()
-                        .title("Sample Book")
-                        .isbn(isbn)
-                        .authorId(authorResponse.getId())
-                        .categoryId(categoryResponse.getId())
-                        .price(29.99)
-                        .publishYear("2026")
-                        .publisher("Sample Publisher")
-                        .build();
+                .title("Sample Book")
+                .isbn(isbn)
+                .authorId(authorResponse.getId())
+                .categoryId(categoryResponse.getId())
+                .price(29.99)
+                .publishYear("2026")
+                .publisher("Sample Publisher")
+                .build();
 
         bookService.createBook(book);
     }
@@ -124,7 +123,6 @@ public class BookStepDefinitions
     public void the_client_requests_book_with_isbn(String isbn)
     {
         response = bookService.getBookByIsbn(isbn);
-
         if (response != null) {
             responseStatus = HttpStatus.OK;
         }
@@ -132,10 +130,8 @@ public class BookStepDefinitions
 
     // Common Then step
     @Then("the response status should be {int}")
-    public void the_response_status_should_be(Integer statusCode)
+    public void the_response_status_should_be(Integer statusCode) 
     {
         assertEquals(statusCode, responseStatus.value());
     }
-
-    
 }
