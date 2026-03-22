@@ -2,6 +2,7 @@ package com.akps.demo.acceptance;
 
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import org.springframework.http.ResponseEntity;
@@ -35,10 +36,14 @@ import org.springframework.http.HttpStatus;
 @SpringBootTest
 public class BookStepDefinitions 
 {
+	@Autowired
+    private BookService bookService;
 	
-    private final BookService bookService;
-    private final CategoryService categoryService;
-    private final AuthorService authorService;
+	@Autowired
+    private CategoryService categoryService;
+	
+	@Autowired
+    private AuthorService authorService;
 
     private HttpStatus responseStatus;
     private CreateBookRequest createdBook;
@@ -48,11 +53,8 @@ public class BookStepDefinitions
     private CategoryResponse categoryResponse;
     
    
-    public BookStepDefinitions(BookService bookService, CategoryService categoryService, AuthorService authorService, BookResponse response)
+    public BookStepDefinitions()
     {
-    	this.bookService = bookService;
-    	this.categoryService = categoryService;
-    	this.authorService = authorService;
     	
     	
     	CreateCategoryRequest c1 = new CreateCategoryRequest("IT");
