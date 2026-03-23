@@ -14,7 +14,7 @@ public class CategoryServiceImpl implements CategoryService{
 	private CategoryRepository categoryRepository;
 	
 	@Override
-	public CategoryResponse save(CreateCategoryRequest request) {
+	public CategoryResponse save(CreateCategoryRequest request){
 		
 		return CategoryMapper.toResponse(categoryRepository.save(CategoryMapper.toEntity(request)));
 	}
