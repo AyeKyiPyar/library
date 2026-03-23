@@ -8,14 +8,13 @@ import com.akps.demo.responses.CategoryResponse;
 import com.akps.demo.services.CategoryService;
 
 @Service
-public class CategoryServiceImpl implements CategoryService
-{
+public class CategoryServiceImpl implements CategoryService{
+	
 	@Autowired
 	private CategoryRepository categoryRepository;
 	
 	@Override
-	public CategoryResponse save(CreateCategoryRequest request)
-	{
+	public CategoryResponse save(CreateCategoryRequest request) {
 		
 		return CategoryMapper.toResponse(categoryRepository.save(CategoryMapper.toEntity(request)));
 	}
