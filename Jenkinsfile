@@ -103,10 +103,10 @@ pipeline {
 		    }
 		}
 
-        stage('Package') {
+      /*  stage('Package') {
             steps {
                 sh 'mvn -B package -DskipTests'
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                archiveArtifacts artifacts: 'target.jar', fingerprint: true
             }
         }
 
@@ -140,7 +140,7 @@ pipeline {
             }
             post {
                 always {
-                    junit allowEmptyResults: true, testResults: '**/target/cucumber-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: '*target/cucumber-reports.xml'
 
                     publishHTML(target: [
                         allowMissing: true,
@@ -152,7 +152,7 @@ pipeline {
                     ])
                 }
             }
-        }
+        }*/
 
     }
 
