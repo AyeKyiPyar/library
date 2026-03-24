@@ -14,15 +14,14 @@ import com.akps.demo.services.CategoryService;
  * Implemented by AKPS at March 2026.
  */
 @Service
-public class CategoryServiceImpl implements CategoryService{
-	
+public class CategoryServiceImpl implements CategoryService {
 	// declare and auto create category repository
 	@Autowired
 	private CategoryRepository categoryRepository;
 	
 	// category save method
 	@Override
-	public CategoryResponse save(CreateCategoryRequest request){
+	public CategoryResponse save(CreateCategoryRequest request) {
 		
 		return CategoryMapper.toResponse(categoryRepository.save(CategoryMapper.toEntity(request)));
 	}
