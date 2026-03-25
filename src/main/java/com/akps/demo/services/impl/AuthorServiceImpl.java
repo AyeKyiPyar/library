@@ -1,3 +1,6 @@
+/**
+ * This is Author Service Implementation.
+ */
 package com.akps.demo.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,18 +11,19 @@ import com.akps.demo.repositories.AuthorRepository;
 import com.akps.demo.requests.CreateAuthorRequest;
 import com.akps.demo.responses.AuthorResponse;
 import com.akps.demo.services.AuthorService;
-
+/**
+ * Implemented by AKPS.
+ */
 @Service
-public class AuthorServiceImpl implements AuthorService
-{
+public class AuthorServiceImpl implements AuthorService {
+	// author repository.
 	@Autowired
-	private AuthorRepository authorRepository;
-
+    private AuthorRepository authorRepository;
+	
+	// save method.
 	@Override
-	public AuthorResponse save(CreateAuthorRequest author)
-	{
-		
-		return AuthorMapper.toResponse(authorRepository.save(AuthorMapper.toEntity(author)));
+    public AuthorResponse save(CreateAuthorRequest author) {	
+        return AuthorMapper.toResponse(authorRepository.save(AuthorMapper.toEntity(author)));
 	}
 
 }
